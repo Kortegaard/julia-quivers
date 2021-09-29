@@ -1,8 +1,8 @@
 include("vertex.jl")
 include("qtypes.jl")
 
-Arrow(start::Vertex, termination::Vertex) = Arrow{typeof(start), Any}(start, termination)
-Arrow(start::Vertex, termination::Vertex, value) = Arrow{typeof(start), typeof(value)}(start, termination, value)
+Arrow(start::Vertex, termination::Vertex) = Arrow{Any}(start, termination)
+Arrow(start::Vertex, termination::Vertex, value) = Arrow{typeof(value)}(start, termination, value)
 
 
 start(arr::Arrow)::Vertex = arr.s

@@ -3,12 +3,12 @@ mutable struct Vertex{Val}
     value::Val 
 end
 
-struct Arrow{V <: Vertex, Val}
-    s::V
-    t::V
+struct Arrow{Val}
+    s::Vertex
+    t::Vertex
     value::Union{Val, Nothing}
-    Arrow{V,Val}(start::V, termination::V) where {V,Val} = new{V,Val}(start, termination,nothing)
-    Arrow{V,Val}(start::V, termination::V, val::Val) where {V,Val} = new{V,Val}(start, termination,val)
+    Arrow{Val}(start::Vertex, termination::Vertex) where {Val} = new{Val}(start, termination,nothing)
+    Arrow{Val}(start::Vertex, termination::Vertex, val::Val) where {Val} = new{Val}(start, termination,val)
 end
 
 mutable struct Path{A <: Arrow}
@@ -27,6 +27,6 @@ end
 
 
 BasicVertex = Vertex{Int}
-BasicArrow = Arrow{BasicVertex, Int}
+BasicArrow = Arrow{Int}
 BasicQuiver = Quiver{BasicArrow, BasicVertex}
 
