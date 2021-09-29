@@ -1,26 +1,22 @@
 
-abstract type AbstractQuiver end
-abstract type AbstractArrow end
-abstract type AbstractVertex end
-
-#const Vertex = Any
-
-mutable struct Vertex{Val} <: AbstractVertex
+mutable struct Vertex{Val}
     value::Val 
 end
 
-struct Arrow{V <: Vertex, Val} <: AbstractArrow
-    value::Union{Val, Nothing}
+struct Arrow{V <: Vertex, Val}
     s::V
     t::V
+    value::Union{Val, Nothing}
+    Arrow{V,Val}(start::V, termination::V) where {V,Val} = new{V,Val}(start, termination,nothing)
+    Arrow{V,Val}(start::V, termination::V, val::Val) where {V,Val} = new{V,Val}(start, termination,val)
 end
 
-mutable struct Path{A <: AbstractArrow}
+mutable struct Path{A <: Arrow}
     path::Vector{A}
     starting_point::Vertex
 end
 
-mutable struct Quiver{E <: AbstractArrow,V <: Vertex} <: AbstractQuiver
+mutable struct Quiver{E <: Arrow, V <: Vertex}
     type_arrow::DataType
     type_vertex::DataType
     vertices::Vector{V}
@@ -33,23 +29,4 @@ end
 BasicVertex = Vertex{Int}
 BasicArrow = Arrow{BasicVertex, Int}
 BasicQuiver = Quiver{BasicArrow, BasicVertex}
-
-### INTERFACE
-function type_arrow(q::AbstractQuiver)::DataType
-    error("Must implement type_arrow")
-end
-
-function type_vertex(q::AbstractQuiver)::DataType
-    error("Must implement type_vertex")
-end
-
-function start(arr::AbstractArrow)::Vertex
-    error("Must implement start of arrow")
-end
-
-function termination(arr::AbstractArrow)::Vertex
-    error("Must implement termination of arrow")
-end
-
-
 
