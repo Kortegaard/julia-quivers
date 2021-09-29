@@ -8,7 +8,7 @@ include("path.jl")
 
 #q = BasicQuiver( Integer[1,2,3,4,5] )
 println(typeof([Vertex(1),Vertex(2),Vertex(3)]))
-q = BasicQuiver([Vertex(1),Vertex(2),Vertex(3)])#, ["a",1,2], ["b",3,2], ["c",2,4])
+q = Quiver([Vertex(1),Vertex(2),Vertex(3)])#, ["a",1,2], ["b",3,2], ["c",2,4])
 println(q)
 a = BasicArrow(Vertex(1),Vertex(4))
 #b = BasicArrow(4,2)

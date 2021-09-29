@@ -16,11 +16,9 @@ mutable struct Path{A <: Arrow}
     starting_point::Vertex
 end
 
-mutable struct Quiver{E <: Arrow, V <: Vertex}
-    type_arrow::DataType
-    type_vertex::DataType
-    vertices::Vector{V}
-    arrows::Vector{E}
+mutable struct Quiver
+    vertices::Vector{Vertex}
+    arrows::Vector{Arrow}
     #start_list::Dict{V, Vector{E}} #E[] has to be edges starting in V
     #termination_list::Dict{V, Vector{E}} #E[] has to be edges starting in V
 end
@@ -28,5 +26,5 @@ end
 
 BasicVertex = Vertex{Int}
 BasicArrow = Arrow{Int}
-BasicQuiver = Quiver{BasicArrow, BasicVertex}
+BasicQuiver = Quiver
 
