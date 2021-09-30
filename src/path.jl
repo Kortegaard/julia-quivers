@@ -1,7 +1,8 @@
 include("qtypes.jl")
 
-length(p::Path{A}) where A = size(p.path)[begin]
+length(p::Path) = size(p.path)[begin]
 start(p::Path)::Vertex = p.starting_point
+
 function termination(p::Path)::Vertex 
     length(p) > 0 || return p.starting_point 
     termination(p.path[end])

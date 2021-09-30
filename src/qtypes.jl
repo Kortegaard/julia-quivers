@@ -3,7 +3,9 @@ mutable struct Vertex{Val}
     value::Val 
 end
 
-struct Arrow{Val}
+#abstract type Arrow end
+
+struct Arrow{Val} 
     s::Vertex
     t::Vertex
     value::Union{Val, Nothing}
@@ -11,18 +13,20 @@ struct Arrow{Val}
     Arrow{Val}(start::Vertex, termination::Vertex, val::Val) where {Val} = new{Val}(start, termination,val)
 end
 
-mutable struct Path{A <: Arrow}
-    path::Vector{A}
+mutable struct Path
+    path::Vector{Arrow}
     starting_point::Vertex
+
+    Path(path::Vector{Arrow}, starting_point::Vertex) = new(path, starting_point)
+    Path(path::Vector{Arrow}) = new(path, start(path[begin]))
+    Path(path::Vector{Arrow{Val}}) where Val = new(path, start(path[begin]))
+    Path(p...) where Val = new(collect(p), start(p[begin]))
 end
 
 mutable struct Quiver
     vertices::Vector{Vertex}
     arrows::Vector{Arrow}
-    #start_list::Dict{V, Vector{E}} #E[] has to be edges starting in V
-    #termination_list::Dict{V, Vector{E}} #E[] has to be edges starting in V
 end
-
 
 BasicVertex = Vertex{Int}
 BasicArrow = Arrow{Int}

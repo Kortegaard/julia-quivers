@@ -2,7 +2,6 @@ include("qtypes.jl")
 include("vertex.jl")
 include("arrow.jl")
 
-#*(a1::Arrow, a2::Arrow)::Path
 
 ## QUIVER
 
