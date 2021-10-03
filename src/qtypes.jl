@@ -6,25 +6,25 @@ end
 #abstract type Arrow end
 
 struct Arrow{Val} 
-    s::Vertex
-    t::Vertex
+    s::Any
+    t::Any
     value::Union{Val, Nothing}
-    Arrow{Val}(start::Vertex, termination::Vertex) where {Val} = new{Val}(start, termination,nothing)
-    Arrow{Val}(start::Vertex, termination::Vertex, val::Val) where {Val} = new{Val}(start, termination,val)
+    Arrow{Val}(start::Any, termination::Any) where {Val} = new{Val}(start, termination,nothing)
+    Arrow{Val}(start::Any, termination::Any, val::Val) where {Val} = new{Val}(start, termination,val)
 end
 
 mutable struct Path
     path::Vector{Arrow}
-    starting_point::Vertex
+    starting_point
 
-    Path(path::Vector{Arrow}, starting_point::Vertex) = new(path, starting_point)
+    Path(path::Vector{Arrow}, starting_point::Any) = new(path, starting_point)
     Path(path::Vector{Arrow}) = new(path, start(path[begin]))
     Path(path::Vector{Arrow{Val}}) where Val = new(path, start(path[begin]))
     Path(p...) where Val = new(collect(p), start(p[begin]))
 end
 
-mutable struct Quiver
-    vertices::Vector{Vertex}
+mutable struct Quiver{V}
+    vertices::Vector{V}
     arrows::Vector{Arrow}
 end
 
