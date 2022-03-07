@@ -2,25 +2,50 @@ include("qtypes.jl")
 include("vertex.jl")
 include("arrow.jl")
 
+#Nice print statements
+Base.show(io::IO, arr::Arrow) = print(string(arr.start.label, " --> " ,arr.termination.label))
+Base.show(io::IO, v::Vertex) = print(string(v.label))
+Base.show(io::IO, q::Quiver) = print("Quiver(", vertices(q),")")
 
-## QUIVER
 
-#Quiver(vertices::Vector{Vertex{T}}) where {T} = Quiver{Vertex}(vertices, Vector{Arrow}()) # Dict{V, Vector{E}}())
-Quiver(vertices::Vector{T}) where {T} = Quiver{T}(vertices, Vector{Arrow}()) # Dict{V, Vector{E}}())
-
-type_vertex(q::Quiver) = q.type_vertex
-type_arrow(q::Quiver) = q.type_arrow
-
-function add_arrow!(q::Quiver, arrow::Arrow)
-    arrow.s in q.vertices || error("The starting vertex must be contained in the quivers vertices.")
-    arrow.t in q.vertices || error("The termination vertex must be contained in the quivers vertices.")
-    #push!(get!(q.adjacency_list, arrow.s, V[]), arrow)
-    push!(q.arrows, arrow)
+function find_vertex(q::Quiver, v::Vertex)::Union{Nothing, Vertex}
+    for u in vertices(q)
+        if u == v
+            return u
+        end
+    end
+    return nothing
 end
 
-function add_arrow!(q::Quiver{T}, start::T, termination::T) where {T}
-    e = Arrow(start,termination) #E(start, termination)
-    add_arrow!(q,e)
+function add_arrow!(q::Quiver, arrow::Arrow)
+    v_start_index = get(findall(x->x==start(arrow), q.vertices),1,-1)
+    if v_start_index == -1
+        error("The starting vertex must be contained in the quivers vertices.")
+    end
+
+    v_end_index = get(findall(x->x==termination(arrow), q.vertices),1,-1)
+    if v_end_index == -1
+        error("The termination vertex must be contained in the quivers vertices.")
+    end
+
+    v_start = vertices(q)[v_start_index]
+    v_end = vertices(q)[v_end_index]
+    arrow.start = v_start
+    arrow.termination = v_end
+
+    push!(v_start.start_arrows, arrow)
+    push!(v_end.termination_arrows, arrow)
+end
+
+function add_arrow!(q::Quiver, start::Vertex, termination::Vertex)
+    arr = Arrow(start,termination)
+    add_arrow!(q,arr)
+end
+
+function add_vertices!(q::Quiver, vertices::Vector{Vertex})
+    for v in vertices
+        add_vertex!(q, v);
+    end
 end
 
 function add_vertex!(q::Quiver, vertex::Vertex)
@@ -28,70 +53,70 @@ function add_vertex!(q::Quiver, vertex::Vertex)
     push!(q.vertices, vertex)
 end
 
-function add_vertex!(q::Quiver, vertex::Any)
+function add_vertex!(q::Quiver, vertex::LabelType)
     v = Vertex(vertex)
     v in q.vertices && error("Vertex is already in quiver")
     push!(q.vertices, v)
 end
 
+function arrows(q::Quiver)::Vector{Arrow}
+    l = Vector{Arrow}()
+    for v in vertices(q)
+        for a in v.start_arrows
+            push!(l, a)
+        end
+    end
+    return l;
+end
+
+function exists_arrow(q::Quiver, from::Vertex, to::Vertex)::Bool
+    for a in arrows(q)
+        if a.start == from && a.termination == to
+            return true
+        end
+    end
+    return false
+end
+
+function exists_arrow(q::Quiver, arr::Arrow)::Bool
+    for a in arrows(q)
+        if a.start == arr.start && a.termination == arr.termination
+            return true
+        end
+    end
+    return false
+end
+
+function find_arrow(q::Quiver, from::Vertex, to::Vertex)::Union{Nothing, Arrow}
+    for a in arrows(q)
+        if a.start == from && a.termination == to
+            return a
+        end
+    end
+    return nothing
+end
+
+function neighbours(q::Quiver, v::Vertex)
+    verts = []
+    for a in v.start_arrows
+        if !(a.termination in verts)
+            push!(verts, a.termination)
+        end
+    end
+    for a in v.termination_arrows
+        if !(a.start in verts)
+            push!(verts, a.start)
+        end
+    end
+    return verts
+end
+
+
 num_vertices(q::Quiver) = length(q.vertices)
-num_arrows(q::Quiver) = sum([length(d[2]) for d in q.adjacency_list])
-type_arrow(q::Quiver) = typeof(E)
+vertices(q::Quiver) = q.vertices
 
 #TODO
+num_arrows(q::Quiver) = 0
 is_path(q::Quiver, p::Path)::Bool = false
 has_cycles(q::Quiver)::Bool = false
 get_paths(q::Quiver)::Vector{Path} = []
-
-function is_connected(q::Quiver{T})::Bool where {T}
-    al = adjacency_list(q)
-    Queue = Vector{T}()
-    explored = Dict{T, Bool}(w => false for w in q.vertices)
-    v = q.vertices[begin]
-    explored[v] = true
-    push!(Queue, v)
-    while size(Queue)[begin] > 0
-        v = popfirst!(Queue)
-        println("explore: ", v)
-        for w in get(al, v, [])
-            get(explored, w, false) && continue
-            explored[w] = true
-            push!(Queue, w)
-        end
-    end
-    println(explored)
-    return all(values(explored))
-end
-
-"""
-Givin list of arrows, starting and terminating in given vertices.
-
-PARAMETERS:
-q::Quiver - 
-
-RETURN
-    Tuple{Dict} R = (R1, R2)
-    R1 : Arrows starting in vertex, indexes by vertices.
-    R2 : Arrows ending in vertex, indexes by vertices.
-"""
-function arrows_indexed_by_vertices(q::Quiver{T}) where {T}
-    start_in_vertex = Dict{T, Vector{Arrow}}()
-    end_in_vertex = Dict{T, Vector{Arrow}}()
-
-    for arr in q.arrows
-        push!(get!(start_in_vertex, start(arr), Vector{Arrow}()), arr)
-        push!(get!(end_in_vertex, termination(arr), Vector{Arrow}()), arr)
-    end
-    return start_in_vertex, end_in_vertex
-end
-
-function adjacency_list(q::Quiver{T})::Dict{T, Vector{T}} where {T}
-    arr_start_in_vertex, arr_end_in_vertex  = arrows_indexed_by_vertices(q)
-    al = Dict{T, Vector{T}}()
-    for v in q.vertices
-        s1 = map(a::Arrow -> termination(a), get(arr_start_in_vertex,v,[]))
-        s2 = map(a::Arrow -> start(a), get(arr_end_in_vertex,v,[]))
-        al[v] = union(s1,s2)
-    end
-    return al
-end

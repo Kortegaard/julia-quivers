@@ -1,34 +1,36 @@
+LabelType = Union{Nothing, String, Int}
 
-mutable struct Vertex{Val}
-    value::Val 
+abstract type AbstractArrow end
+ 
+mutable struct Vertex 
+    label::LabelType
+    start_arrows::Vector{<:AbstractArrow}
+    termination_arrows::Vector{<:AbstractArrow}
+    data::Any
+    Vertex(label::LabelType) = new(label, Arrow[], Arrow[], Dict{String,Any}())
 end
 
-#abstract type Arrow end
-
-struct Arrow{Val} 
-    s::Any
-    t::Any
-    value::Union{Val, Nothing}
-    Arrow{Val}(start::Any, termination::Any) where {Val} = new{Val}(start, termination,nothing)
-    Arrow{Val}(start::Any, termination::Any, val::Val) where {Val} = new{Val}(start, termination,val)
+mutable struct Arrow <: AbstractArrow
+    start::Vertex
+    termination::Vertex
+    label::LabelType
+    data::Any
+    Arrow(start::Vertex, termination::Vertex) = new(start, termination, nothing, Dict{String, Any}())
+    Arrow(start::Vertex, termination::Vertex, label::LabelType) = new(start, termination, label, Dict{String, Any}())
 end
+
 
 mutable struct Path
     path::Vector{Arrow}
-    starting_point
+    start::Vertex
+    termination::Vertex
 
-    Path(path::Vector{Arrow}, starting_point::Any) = new(path, starting_point)
-    Path(path::Vector{Arrow}) = new(path, start(path[begin]))
-    Path(path::Vector{Arrow{Val}}) where Val = new(path, start(path[begin]))
-    Path(p...) where Val = new(collect(p), start(p[begin]))
+    Path(path::Vector{Arrow}, start::Vertex, termination::Vertex) = new(path, start,termination)
+    Path(path::Vector{Arrow}) = new(path, start(path[begin]), termination(path[end]))
+    Path(p...) = new(collect(p), start(p[begin]), termination(p[end]))
 end
 
-mutable struct Quiver{V}
-    vertices::Vector{V}
-    arrows::Vector{Arrow}
+mutable struct Quiver
+    vertices::Vector{Vertex}
+
 end
-
-BasicVertex = Vertex{Int}
-BasicArrow = Arrow{Int}
-BasicQuiver = Quiver
-
