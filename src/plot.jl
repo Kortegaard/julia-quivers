@@ -1,4 +1,4 @@
-include("/Users/ank/master/code/julia_quiver/src/main.jl")
+include("main.jl")
 
 using LinearAlgebra
 
@@ -84,33 +84,3 @@ function spring_step(q::Quiver,delta::Float64, c0::Float64 ,c1::Float64)
         end
     end
 end
-
-using CairoMakie
-CairoMakie.activate!(type = "pdf")
-#using Plots
-
-#function plot_quiver(pl::Plots.Plot{Plots.GRBackend} ,qq::Quiver)
-#    scatter(pl,map(x -> [i for i in x],collect(zip(map(x->x.data["position"],vertices(qq))...)))..., legend = false)
-#    for arr in arrows(qq)
-#           plot!(pl, map( x-> [i for i in x],collect(zip(arr.start.data["position"], arr.termination.data["position"])))..., legend = false, arrow=true)
-#       end
-#    return pl
-#end
-#
-#
-
-#function plot_quiver(qq::Quiver)
-#    pl = scatter(map(x -> [i for i in x],collect(zip(map(x->x.data["position"],vertices(qq))...)))..., legend = false)
-#    for arr in arrows(qq)
-#           plot!(pl, map( x-> [i for i in x],collect(zip(arr.start.data["position"], arr.termination.data["position"])))..., legend = false, arrow=:closed)
-#       end
-#    return pl
-#end
-
-#q = Quiver([Vertex(1), Vertex(2), Vertex(3)])
-#add_arrow!(q, Vertex(1), Vertex(2))
-#add_arrow!(q, Vertex(1), Vertex(3))
-#add_arrow!(q, Vertex(2), Vertex(3))
-#set_random_positions!(q);
-
-

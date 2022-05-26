@@ -2,3 +2,5 @@ name = "Quivers"
 uuid = "484e10a1-6d98-46ca-8db2-94de0be59128"
 version = "0.1.0"
 
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
