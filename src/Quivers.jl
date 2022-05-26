@@ -15,7 +15,7 @@ export neighbours
 include("plot.jl")
 ## Plot
 export normalize_quiver!
-export set_random_position!, spring_step
+export set_random_positions!, spring_step
 
 
 
