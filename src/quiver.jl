@@ -111,6 +111,8 @@ function neighbours(q::Quiver, v::Vertex)
     return verts
 end
 
+get_data(a::Arrow, key::Any, default::Any) = get(a.data, key, default)
+get_data(v::Vertex, key::Any, default::Any) = get(v.data, key, default)
 
 num_vertices(q::Quiver) = length(q.vertices)
 vertices(q::Quiver) = q.vertices
@@ -120,3 +122,39 @@ num_arrows(q::Quiver) = 0
 is_path(q::Quiver, p::Path)::Bool = false
 has_cycles(q::Quiver)::Bool = false
 get_paths(q::Quiver)::Vector{Path} = []
+
+
+"""
+
+Quiver:
+    - add_arrow(q,a)
+        - (q, start, term)
+    - add_vertex(q,v)
+        - (q, name)
+
+    - get_date(q, index, default)
+    - set_data(q, index, data)
+
+    - arrows
+    - vertices
+
+Graph:
+    - add_arrow
+    - add_vertex
+
+    - get_date(q, index, default)
+    - set_data(q, index, data)
+    
+    - arrows
+    - vertices
+
+#Modules
+
+## GAP QPA
+    - gap_quiver(q)
+    - gap_quiver_with_potential(q, p)
+
+## 
+
+
+"""

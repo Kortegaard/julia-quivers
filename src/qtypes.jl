@@ -19,7 +19,6 @@ mutable struct Arrow <: AbstractArrow
     Arrow(start::Vertex, termination::Vertex, label::LabelType) = new(start, termination, label, Dict{String, Any}())
 end
 
-
 mutable struct Path
     path::Vector{Arrow}
     start::Vertex
